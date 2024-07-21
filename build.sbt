@@ -44,6 +44,7 @@ lazy val microservice = (project in file("."))
       "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
+    libraryDependencies += ws,
     retrieveManaged := true,
     resolvers ++= Seq(Resolver.jcenterRepo),
     // concatenate js

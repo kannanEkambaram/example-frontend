@@ -16,14 +16,23 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    formHelper: FormWithCSRF,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton
 )
 
 @(list: SummaryList)(implicit request: Request[_], messages: Messages)
 
+
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+   @formHelper(action = routes.CarbonIntensityController.onPageLoad()) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+        <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-    @govukSummaryList(list)
+        @govukSummaryList(list)
+
+        @govukButton(
+            ButtonViewModel(messages("site.submit"))
+        )
+    }
 }

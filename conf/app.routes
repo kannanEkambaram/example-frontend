@@ -4,6 +4,15 @@
 
 GET         /                                            controllers.IndexController.onPageLoad()
 
+
+GET         /carbon-intensity-result                    controllers.CarbonIntensityController.onPageLoad()
+
+GET         /postCode                                    controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
+POST        /postCode                                    controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)
+GET         /changePostCode                              controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
+POST        /changePostCode                              controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
+
+
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
 GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
@@ -19,3 +28,26 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
+
+GET        /business-name                                controllers.BusinessNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /business-name                                controllers.BusinessNameController.onSubmit(mode: Mode = NormalMode)
+GET        /change-business-name                         controllers.BusinessNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-business-name                         controllers.BusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+
+
+GET        /fromDate                                    controllers.FromDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /fromDate                                    controllers.FromDateController.onSubmit(mode: Mode = NormalMode)
+GET        /changeFromDate                              controllers.FromDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeFromDate                          controllers.FromDateController.onSubmit(mode: Mode = CheckMode)
+
+
+GET        /endDate                  controllers.EndDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /endDate                  controllers.EndDateController.onSubmit(mode: Mode = NormalMode)
+GET        /changeEndDate                        controllers.EndDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeEndDate                        controllers.EndDateController.onSubmit(mode: Mode = CheckMode)
+
+GET        /placeOfBusiness                        controllers.PlaceOfBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /placeOfBusiness                        controllers.PlaceOfBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /changePlaceOfBusiness                  controllers.PlaceOfBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /changePlaceOfBusiness                  controllers.PlaceOfBusinessController.onSubmit(mode: Mode = CheckMode)

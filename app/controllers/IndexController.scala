@@ -17,11 +17,15 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.{Mode, NormalMode}
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.IndexView
+import models.Mode
+import navigation.Navigator
 
 class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
@@ -30,6 +34,7 @@ class IndexController @Inject()(
                                ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = identify { implicit request =>
-    Ok(view())
+    // Ok(view())
+    Redirect(routes.PostCodeController.onPageLoad(NormalMode))
   }
 }

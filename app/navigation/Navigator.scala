@@ -27,12 +27,14 @@ import models._
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => routes.IndexController.onPageLoad()
+    case PostCodePage   => _ => routes.FromDateController.onPageLoad(NormalMode)
+    case FromDatePage   => _ => routes.EndDateController.onPageLoad(NormalMode)
+    case EndDatePage    => _ => routes.CheckYourAnswersController.onPageLoad()
+    case _: Page        => _ => routes.IndexController.onPageLoad()
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
-  }
+  private val checkRouteMap: Page => UserAnswers => Call = (_ =>
+    _ => routes.CheckYourAnswersController.onPageLoad())
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

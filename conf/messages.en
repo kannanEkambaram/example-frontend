@@ -10,6 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.submit = Submit
 
 date.day = Day
 date.month = Month
@@ -47,3 +48,55 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+businessName.title = Business Name
+businessName.heading = Business Name
+businessName.checkYourAnswersLabel = Business Name
+businessName.error.required = Enter Business Name
+businessName.error.length = Business Name must be 15 characters or less
+businessName.change.hidden = Business Name
+
+
+postCode.title = PostCode
+postCode.heading = What is your postcode?
+postCode.checkYourAnswersLabel = PostCode
+postCode.error.required = Enter Your PostCode
+postCode.error.length = PostCode must be 8 characters or less
+postCode.change.hidden = PostCode
+
+fromDate.title = StartDate
+fromDate.heading = Start Date
+fromDate.hint = For example, 12 11 2007.
+fromDate.checkYourAnswersLabel = FromDate
+fromDate.error.required.all = Enter the Start Date
+fromDate.error.required.two = The Start Date must include {0} and {1}
+fromDate.error.required = The fromDate must include {0}
+fromDate.error.invalid = Enter a real From Date
+fromDate.change.hidden = FromDate
+
+endDate.title = EndDate
+endDate.heading = End Date
+endDate.hint = For example, 12 11 2007.
+endDate.checkYourAnswersLabel = EndDate
+endDate.error.required.all = Enter the End Date
+endDate.error.required.two = The End Date must include {0} and {1}
+endDate.error.required = The End Date must include {0}
+endDate.error.invalid = Enter a real End Date
+endDate.change.hidden = EndDate
+
+placeOfBusiness.title = Enter your place of business
+placeOfBusiness.heading = Enter your place of business
+placeOfBusiness.uK = UK
+placeOfBusiness.uS = US
+placeOfBusiness.checkYourAnswersLabel = Enter your place of business
+placeOfBusiness.error.required = Select placeOfBusiness
+placeOfBusiness.change.hidden = PlaceOfBusiness
+
+
+calculationResult.title = Your calculation result - energy Intensity api
+energyResult.source = Most of your energy came from a {0} source for the postcode {1}
+renewable = Renewable energy: {0}
+nonRenewable = Non Renewable energy: {0}
+nuclear = Nuclear energy: {0}
+
+

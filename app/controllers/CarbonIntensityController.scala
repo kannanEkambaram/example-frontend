@@ -53,9 +53,9 @@ class CarbonIntensityController @Inject()(
 
       getCarbonIntensity(startDate, endDate, postcode).flatMap {
         case Right(response) =>
-          val (highestEnergySource, renewablePercentage, nuclearPercentage, nonRenewablePercentage) = response
+          val (h, r, n, nr) = response
 
-          Future.successful(Ok(view(postcode, highestEnergySource, renewablePercentage, nuclearPercentage, nonRenewablePercentage)))
+          Future.successful(Ok(view(postcode, h, r, n, nr)))
 
             /*
         case Left(errorMessage) =>
@@ -140,7 +140,8 @@ class CarbonIntensityController @Inject()(
     ).maxBy(_._2)._1
 
     /*println(s"highestEnergySource: $highestEnergySource, renewablePercentage: $renewablePercentage, nuclearPercentage: $nuclearPercentage, nonRenewablePercentage: $nonRenewablePercentage")
-    */(highestEnergySource, renewablePercentage, nuclearPercentage, nonRenewablePercentage)
+    */
+    (highestEnergySource, renewablePercentage, nuclearPercentage, nonRenewablePercentage)
   }
 
 }

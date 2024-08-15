@@ -57,15 +57,14 @@ class CarbonIntensityController @Inject()(
 
           Future.successful(Ok(view(postcode, h, r, n, nr)))
 
-            /*
         case Left(errorMessage) =>
           val pageTitle = "Error"
           val heading = "Error fetching carbon Intensity data"
           val message = s"Failed to fetch certain intensity data: $errorMessage"
 
-          Future.successful {
-            InternalServerError(errorHandler.standardErrorTemplate(pageTitle, heading, message))
-          }*/
+          errorHandler.standardErrorTemplate(pageTitle, heading, message).map { r =>
+            InternalServerError(r)
+          }
       }
   }
 

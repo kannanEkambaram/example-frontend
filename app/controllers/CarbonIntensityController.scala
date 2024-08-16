@@ -16,31 +16,27 @@
 
 package controllers
 
+import connectors.CarbonIntensityConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import handlers.ErrorHandler
+import pages.{EndDatePage, FromDatePage, PostCodePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.ws.{WSClient, WSResponse}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.play.language.LanguageUtils
-
+import views.html.CalculationResultView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import views.html.CalculationResultView
-import pages.{EndDatePage, FromDatePage, PostCodePage}
-import play.api.libs.json.{JsValue, Json}
 
 
 class CarbonIntensityController @Inject()(
                                            override val messagesApi: MessagesApi,
                                            identify: IdentifierAction,
-                                           languageUtils: LanguageUtils,
                                            getData: DataRetrievalAction,
                                            requireData: DataRequiredAction,
-                                           ws: WSClient,
                                            val controllerComponents: MessagesControllerComponents,
                                            view: CalculationResultView,
-                                           errorHandler: ErrorHandler
+                                           errorHandler: ErrorHandler,
+                                           carbonIntensityConnector: CarbonIntensityConnector
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -49,12 +45,9 @@ class CarbonIntensityController @Inject()(
       val startDate: String = request.userAnswers.get(FromDatePage).get.toString + "T00:00Z"
       val endDate: String = request.userAnswers.get(EndDatePage).get.toString + "T23:59Z"
 
-      println(s"post code : $postcode, startDate: $startDate, endDate: $endDate")
-
-      getCarbonIntensity(startDate, endDate, postcode).flatMap {
+      carbonIntensityConnector.getCarbonIntensity(startDate, endDate, postcode).flatMap {
         case Right(response) =>
           val (h, r, n, nr) = response
-
           Future.successful(Ok(view(postcode, h, r, n, nr)))
 
         case Left(errorMessage) =>
@@ -66,81 +59,6 @@ class CarbonIntensityController @Inject()(
             InternalServerError(r)
           }
       }
-  }
-
-
-  def getCarbonIntensity(from: String, to: String, postcode: String): Future[Either[String, (String, Double, Double, Double)]] = {
-
-    val url = s"https://api.carbonintensity.org.uk/regional/intensity/$from/$to/postcode/$postcode"
-
-    println("**************")
-    println(url)
-    println("**************")
-
-
-    ws.url(url).get().map { response =>
-      response.status match {
-        case OK => Right(getGenerationMixData(response))
-        case _ => Left("Failed to fetch carbon intensity data")
-      }
-    }.recover {
-      case e: Exception => Left(s"Exception occurred: ${e.getMessage}")
-    }
-  }
-
-
-  def getGenerationMixData(response: WSResponse): (String, Double, Double, Double) = {
-    val jsonObject = Json.parse(response.json.toString())
-    val dataArray = (jsonObject \ "data" \ "data" ).asOpt[Seq[JsValue]].getOrElse(Seq.empty[JsValue])
-
-    val totalPercentageMap: Map[String, Double] = dataArray.flatMap { data =>
-        val generationMix = (data \ "generationmix").asOpt[Seq[JsValue]].getOrElse(Seq.empty[JsValue])
-
-/*
-        println("total values: "+ generationMix.map { mix =>
-          val fuel = (mix \ "fuel").as[String]
-          val perc = (mix \ "perc").as[Double]
-          (fuel, perc)
-        }.groupBy(_._1).view.mapValues(_.map(_._2).sum).toMap.values.sum)
-
-*/
-        generationMix.map { mix =>
-          val fuel = (mix \ "fuel").as[String]
-          val perc = (mix \ "perc").as[Double]
-          (fuel, perc)
-        }
-      }.groupBy(_._1)
-      .view.mapValues(_.map(_._2).sum)
-      .toMap
-
-    def genSourceAndPercentageMap(totalPercentageMap: Map[String, Double]): Map[String, Double] = {
-      val totalPercentageSum = totalPercentageMap.values.sum
-      totalPercentageMap.view.mapValues(perc => BigDecimal(perc / totalPercentageSum  * 100)
-        .setScale(2, BigDecimal.RoundingMode.DOWN).toDouble).toMap
-    }
-
-    val sourceAndPercentageMap = genSourceAndPercentageMap(totalPercentageMap)
-
-    val renewableFuels = Seq("wind", "biomass", "hydro", "solar")
-    val nuclearFuels = Seq("nuclear")
-    val nonRenewableFuels = Seq("coal", "other", "imports", "gas")
-
-    val renewablePercentage = sourceAndPercentageMap.view.filterKeys(renewableFuels.contains).values.sum
-
-    val nuclearPercentage = sourceAndPercentageMap.view.filterKeys(nuclearFuels.contains).values.sum
-
-    val nonRenewablePercentage = sourceAndPercentageMap.view.filterKeys(nonRenewableFuels.contains).values.sum
-
-
-    val highestEnergySource = Seq(
-      "renewable" -> 	renewablePercentage,
-      "nuclear" -> nuclearPercentage,
-      "non-renewable" -> nonRenewablePercentage
-    ).maxBy(_._2)._1
-
-    /*println(s"highestEnergySource: $highestEnergySource, renewablePercentage: $renewablePercentage, nuclearPercentage: $nuclearPercentage, nonRenewablePercentage: $nonRenewablePercentage")
-    */
-    (highestEnergySource, renewablePercentage, nuclearPercentage, nonRenewablePercentage)
   }
 
 }
